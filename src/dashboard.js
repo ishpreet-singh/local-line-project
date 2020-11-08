@@ -1,28 +1,27 @@
-import React from 'react';
+import React, { Component } from "react";
+import ReactPaginate from "react-paginate";
+import { products } from './data';
 import Customer from './customer';
-import { products, columns } from './data';
-import BootstrapTable from 'react-bootstrap-table-next';
+import CustomerModal from './customer_modal';
 import ReactModal from 'react-modal';
 
 ReactModal.setAppElement("#root");
 
 class Dashboard extends React.Component {
-
     constructor(props) {
         super(props);
         this.state = {
+            offset: 0,
+            perPage: 3,
+            currentPage: 0,
             customers: [],
             currentCustomerIndex: null,
             showModal: false,
         };
+        this.handlePageClick = this.handlePageClick.bind(this);
         this.handleOpenModal = this.handleOpenModal.bind(this);
         this.handleCloseModal = this.handleCloseModal.bind(this);
     }
-
-    toggleModal() {
-        this.state.setIsOpen(!this.setState.isOpen);
-    }
-
 
     handleOpenModal(index) {
         this.setState({ showModal: true, currentCustomerIndex: index });
@@ -32,41 +31,71 @@ class Dashboard extends React.Component {
         this.setState({ showModal: false, currentCustomerIndex: null });
     }
 
-    render() {
+    receivedData() {
+        const data = products.slice();
+        const slice = data.slice(this.state.offset, this.state.offset + this.state.perPage);
 
-        let customers = products.slice();
-        // Improve Remove static state setting
-        this.state.customers = customers;
+        const postData = slice.map((pd, index) => {
+            return (<Customer data={pd} onViewClick={() => this.handleOpenModal(index)}> </Customer>);
+        });
 
-        this.state.showModal = true;
-        this.state.currentCustomerIndex = 0;
-
-        for (let i = 0; i < customers.length; i++) {
-            let currentProduct = products[i];
-            currentProduct["button"] = <button onClick={() => this.handleOpenModal(i)}>View</button>
-        }
-
-        let data = this.state.showModal ? this.state.customers[this.state.currentCustomerIndex] : null;
-
-        console.log("Data: ", data);
-
-        // Improve Add Pagination
-        return (
-            <div>
-                {/* <BootstrapTable striped bordered hover
-                    keyField="city"
-                    data={customers}
-                    columns={columns}
-                /> */}
-                <ReactModal id="modal" className="myModal" isOpen={this.state.showModal} contentLabel="Minimal Modal Example"
-                    overlayClassName="overlay" closeTimeoutMS={200} onRequestClose={this.handleCloseModal}>
-                    <Customer data={data} onClick={this.handleCloseModal} />
-                </ReactModal>
-            </div>
+        this.setState({
+            pageCount: Math.ceil(data.length / this.state.perPage),
+            postData: postData
+        })
+    }
+    handlePageClick = (e) => {
+        const selectedPage = e.selected;
+        const offset = selectedPage * this.state.perPage;
+        this.setState(
+            {
+                currentPage: selectedPage,
+                offset: offset
+            },
+            () => {
+                this.receivedData();
+            }
         )
-
     }
 
+    componentDidMount() {
+        this.receivedData();
+    }
+
+    render() {
+        let customers = products.slice();
+        this.state.customers = customers;
+        let data = this.state.showModal ? this.state.customers[this.state.currentCustomerIndex] : null;
+        return (
+            <div>
+                <div className="container">
+                    <div className="row customerHeader">
+                        MY CUSTOMERS
+                    </div>
+                    {this.state.postData}
+                    <div className="row customerFooter">
+                        <ReactPaginate
+                            previousLabel={"<"}
+                            nextLabel={">"}
+                            pageCount={this.state.pageCount}
+                            onPageChange={this.handlePageClick}
+                            breakLabel={""}
+                            containerClassName={"pagination"}
+                            marginPagesDisplayed={0}
+                            pageRangeDisplayed={0}
+                            subContainerClassName={"pages pagination"}
+                            activeClassName={"active"}
+                        />
+                    </div>
+                </div>
+                <ReactModal id="modal" className="myModal" isOpen={this.state.showModal} contentLabel="Minimal Modal Example"
+                    overlayClassName="overlay" closeTimeoutMS={200} onRequestClose={this.handleCloseModal}>
+                    <CustomerModal data={data} onClick={this.handleCloseModal} />
+                </ReactModal>
+
+            </div>
+        );
+    }
 }
 
 export default Dashboard;
