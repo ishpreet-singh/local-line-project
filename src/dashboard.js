@@ -38,6 +38,9 @@ class Dashboard extends React.Component {
         // Improve Remove static state setting
         this.state.customers = customers;
 
+        // this.state.showModal = true;
+        // this.state.currentCustomerIndex = 2;
+
         for (let i = 0; i < customers.length; i++) {
             let currentProduct = products[i];
             currentProduct["button"] = <button onClick={() => this.handleOpenModal(i)}>View</button>
