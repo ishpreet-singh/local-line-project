@@ -1,6 +1,6 @@
-import React, { Component } from "react";
+import React from "react";
 import ReactPaginate from "react-paginate";
-// import { products } from './data';
+import { products } from './data';
 import Customer from './customer';
 import CustomerModal from './customer_modal';
 import ReactModal from 'react-modal';
@@ -15,9 +15,9 @@ class Dashboard extends React.Component {
             offset: 0,
             perPage: 3,
             currentPage: 0,
-            customers: [],
             currentCustomerIndex: null,
             showModal: false,
+            customers: []
         };
         this.handlePageClick = this.handlePageClick.bind(this);
         this.handleOpenModal = this.handleOpenModal.bind(this);
@@ -35,16 +35,17 @@ class Dashboard extends React.Component {
     receivedData() {
         APICall().then((apiData) => {
             const data = apiData.slice();
+            // const data = products.slice();
             const slice = data.slice(this.state.offset, this.state.offset + this.state.perPage);
     
             const postData = slice.map((pd, index) => {
-                return (<Customer data={pd} onViewClick={() => this.handleOpenModal(index)}> </Customer>);
+                return (<Customer data={pd} key={index} onViewClick={() => this.handleOpenModal(index)}> </Customer>);
             });
     
             this.setState({
                 pageCount: Math.ceil(data.length / this.state.perPage),
                 postData: postData,
-                customers: data
+                customers: slice
             })
         })
     }
@@ -91,14 +92,14 @@ class Dashboard extends React.Component {
                         />
                     </div>
                 </div>
-                <ReactModal id="modal" className="myModal" isOpen={this.state.showModal} contentLabel="Minimal Modal Example"
+                <ReactModal id="modal" className="myModal" isOpen={this.state.showModal && !!data} contentLabel="Minimal Modal Example"
                     overlayClassName="overlay" onRequestClose={this.handleCloseModal}>
                     <CustomerModal data={data} onClick={this.handleCloseModal} />
                 </ReactModal>
 
-                <div class="footer">
+                <div className="footer">
                     <svg width="400" height="147" viewBox="0 0 765 147" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" clip-rule="evenodd" d="M74.2579 137.541C109.846 137.541 138.695 109.099 138.695 74.0147C138.695 38.9305 109.846 10.4883 74.2579 10.4883C38.6699 10.4883 9.82031 38.9305 9.82031 74.0147C9.82031 109.099 38.6699 137.541 74.2579 137.541Z" stroke="#00B284" stroke-width="7.05" />
+                        <path fillRule="evenodd" clipRule="evenodd" d="M74.2579 137.541C109.846 137.541 138.695 109.099 138.695 74.0147C138.695 38.9305 109.846 10.4883 74.2579 10.4883C38.6699 10.4883 9.82031 38.9305 9.82031 74.0147C9.82031 109.099 38.6699 137.541 74.2579 137.541Z" stroke="#00B284" strokeWidth="7.05" />
                         <path d="M58.4211 104.518C57.8766 104.518 57.332 104.315 56.9144 103.903C56.0793 103.082 56.0793 101.752 56.9144 100.931L86.4659 71.8436C86.9988 71.3207 87.7726 71.1128 88.493 71.2899C91.2232 71.9612 94.4019 70.6809 97.4538 67.6772C100.004 65.1679 102.158 61.7675 103.213 58.5781C104.168 55.696 104.11 53.3544 103.056 52.3165C101.998 51.2785 99.6215 51.2221 96.6923 52.1605C93.4537 53.1985 89.9966 55.3203 87.4481 57.8297C84.3962 60.8321 83.0903 63.9651 83.7768 66.6512C83.9564 67.3699 83.7451 68.1271 83.2143 68.6469L55.1997 96.2218C54.4608 96.9498 54.6199 97.325 54.7193 97.5728C55.169 98.6466 54.6505 99.8744 53.5598 100.317C52.4662 100.761 51.221 100.243 50.7728 99.1737C49.907 97.101 50.4072 94.9982 52.1801 93.2552L79.3974 66.4477C78.9171 62.6183 80.6716 58.5484 84.4222 54.8526C87.4697 51.8547 91.4576 49.4121 95.3661 48.1633C99.99 46.683 103.788 47.0987 106.071 49.3438C108.353 51.5889 108.78 55.3322 107.271 59.8803C105.996 63.7261 103.521 67.6505 100.47 70.6501C96.7197 74.3412 92.5775 76.0723 88.692 75.5956L59.9294 103.903C59.5118 104.31 58.9672 104.518 58.4211 104.518Z" fill="#00B284" />
                         <path d="M69.7732 70.8286C69.2241 70.8286 68.6749 70.6207 68.2619 70.2091L65.276 67.2499C64.7498 66.7257 64.5387 65.9729 64.7177 65.2587C65.4045 62.5756 65.7777 61.0952 62.5547 57.9251L53.7805 49.2832C52.9437 48.4606 52.9437 47.1332 53.7805 46.3106C54.6157 45.4879 55.9648 45.4879 56.8001 46.3106L65.5758 54.9479C69.6554 58.9629 69.8145 61.9148 69.1369 65.1073L71.2906 67.2454C72.1212 68.0666 72.1168 69.3999 71.2815 70.2182C70.8639 70.6249 70.3193 70.8286 69.7732 70.8286Z" fill="#00B284" />
                         <path d="M92.2133 103.991C90.8244 103.991 89.5148 103.459 88.5283 102.489L78.3589 92.5026C77.5253 91.6815 77.5253 90.3529 78.356 89.5297C79.1868 88.7086 80.5403 88.7086 81.3754 89.5255L91.5492 99.5173C91.7915 99.756 92.0677 99.7902 92.2133 99.7902C92.3583 99.7902 92.6352 99.756 92.8724 99.5215L94.8029 97.6224C95.1671 97.2633 95.1671 96.6781 94.8029 96.319L84.6782 86.3671C83.8417 85.546 83.8417 84.216 84.6739 83.3949C85.5039 82.5717 86.8582 82.5717 87.6933 83.39L97.8273 93.3384C99.8588 95.3369 99.8588 98.5863 97.8273 100.586L95.8969 102.485C94.9118 103.455 93.6065 103.991 92.2133 103.991Z" fill="#00B284" />

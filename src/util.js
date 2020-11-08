@@ -47,7 +47,7 @@ var customers = [
 
 export default function APICall () {
   return new Promise(function(resolve, reject) {
-    setTimeout(resolve, 30, customers);
+    setTimeout(resolve, 3000, customers);
   });
 }
 
