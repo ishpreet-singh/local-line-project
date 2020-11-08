@@ -38,8 +38,8 @@ class Dashboard extends React.Component {
         // Improve Remove static state setting
         this.state.customers = customers;
 
-        // this.state.showModal = true;
-        // this.state.currentCustomerIndex = 2;
+        this.state.showModal = true;
+        this.state.currentCustomerIndex = 0;
 
         for (let i = 0; i < customers.length; i++) {
             let currentProduct = products[i];
@@ -48,14 +48,16 @@ class Dashboard extends React.Component {
 
         let data = this.state.showModal ? this.state.customers[this.state.currentCustomerIndex] : null;
 
+        console.log("Data: ", data);
+
         // Improve Add Pagination
         return (
             <div>
-                <BootstrapTable striped bordered hover
+                {/* <BootstrapTable striped bordered hover
                     keyField="city"
                     data={customers}
                     columns={columns}
-                />
+                /> */}
                 <ReactModal id="modal" className="myModal" isOpen={this.state.showModal} contentLabel="Minimal Modal Example"
                     overlayClassName="overlay" closeTimeoutMS={200} onRequestClose={this.handleCloseModal}>
                     <Customer data={data} onClick={this.handleCloseModal} />

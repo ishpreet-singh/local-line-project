@@ -1,11 +1,26 @@
 import React from 'react';
 
+function getMonth(deliveryDate) {
+    const months = ["JANUARY", "FEBURARY", "MARCH", "APRIL", "MAY", "JUNE", 
+                    "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
+    const deliveryMonth = months[deliveryDate.getMonth()];
+    return deliveryMonth;
+}
+
 class Customer extends React.Component {
     render() {
         if (!this.props.data) {
             return "";
         }
         let customerData = this.props.data;
+        let customerInfo = customerData.customer_info;
+        let lastDeliveryDate = "-", deliveryMonth = "";
+        if (customerInfo.last_delivery_date) {
+            lastDeliveryDate = new Date(customerInfo.last_delivery_date).toDateString();
+            deliveryMonth = getMonth(new Date(customerInfo.last_delivery_date));
+        }
+        let totalSales = customerInfo.orders_this_month * customerInfo.buyer_average_order;
+
         return (
             <div className="container">
                 <div className="row" >
@@ -45,10 +60,10 @@ class Customer extends React.Component {
                         <div className="modalCol">
                             <h4>AVERAGE ORDER</h4>
                             <hr class="modalMidLine"></hr>
-                            <span>$0.01</span>
+                            <span>${customerInfo.buyer_average_order}</span>
                         </div>
                         <div className="modalCol">
-                            <h4>MAY ORDER</h4>
+                            <h4>{deliveryMonth} SALES</h4>
                             <hr class="modalMidLine"></hr>
                             <span>$0.01</span>
                         </div>
@@ -62,20 +77,20 @@ class Customer extends React.Component {
                         <div className="modalCol">
                             <h4>LAST DELIVERY</h4>
                             <hr class="modalMidLine"></hr>
-                            <span>May 7, 2018</span>
+                            <span>{lastDeliveryDate}</span>
                         </div>
                         <div className="modalCol">
                             <button className="nodeButton" >ADD NOTE</button>
                         </div>
                         <div className="modalCol">
-                            <h4>MAY ORDERS</h4>
+                            <h4>{deliveryMonth} ORDERS</h4>
                             <hr class="modalMidLine"></hr>
-                            <span>1</span>
+                            <span>{customerInfo.orders_this_month}</span>
                         </div>
                         <div className="modalCol">
                             <h4>TOTAL SALES</h4>
                             <hr class="modalMidLine"></hr>
-                            <span>$0.01</span>
+                            <span>${totalSales}</span>
                         </div>
                     </div>
                 </div>
