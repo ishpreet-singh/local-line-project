@@ -18,3 +18,9 @@ Or
 ```
 yarn start
 ```
+
+4. Open `http://localhost:3000/` in your browser.
+
+5. The data will be loaded in 3 seconds. 
+
+Enjoy :)
