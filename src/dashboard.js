@@ -92,7 +92,7 @@ class Dashboard extends React.Component {
                     </div>
                 </div>
                 <ReactModal id="modal" className="myModal" isOpen={this.state.showModal} contentLabel="Minimal Modal Example"
-                    overlayClassName="overlay" closeTimeoutMS={200} onRequestClose={this.handleCloseModal}>
+                    overlayClassName="overlay" onRequestClose={this.handleCloseModal}>
                     <CustomerModal data={data} onClick={this.handleCloseModal} />
                 </ReactModal>
 
