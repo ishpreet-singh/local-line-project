@@ -1,9 +1,10 @@
 import React, { Component } from "react";
 import ReactPaginate from "react-paginate";
-import { products } from './data';
+// import { products } from './data';
 import Customer from './customer';
 import CustomerModal from './customer_modal';
 import ReactModal from 'react-modal';
+import APICall from './util';
 
 ReactModal.setAppElement("#root");
 
@@ -32,17 +33,19 @@ class Dashboard extends React.Component {
     }
 
     receivedData() {
-        const data = products.slice();
-        const slice = data.slice(this.state.offset, this.state.offset + this.state.perPage);
-
-        const postData = slice.map((pd, index) => {
-            return (<Customer data={pd} onViewClick={() => this.handleOpenModal(index)}> </Customer>);
-        });
-
-        this.setState({
-            pageCount: Math.ceil(data.length / this.state.perPage),
-            postData: postData,
-            customers: data
+        APICall().then((apiData) => {
+            const data = apiData.slice();
+            const slice = data.slice(this.state.offset, this.state.offset + this.state.perPage);
+    
+            const postData = slice.map((pd, index) => {
+                return (<Customer data={pd} onViewClick={() => this.handleOpenModal(index)}> </Customer>);
+            });
+    
+            this.setState({
+                pageCount: Math.ceil(data.length / this.state.perPage),
+                postData: postData,
+                customers: data
+            })
         })
     }
     
