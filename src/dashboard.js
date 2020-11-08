@@ -1,10 +1,10 @@
 import React from "react";
 import ReactPaginate from "react-paginate";
-import { products } from './data';
 import Customer from './customer';
 import CustomerModal from './customer_modal';
 import ReactModal from 'react-modal';
 import APICall from './util';
+import Loader from "react-loader-spinner";
 
 ReactModal.setAppElement("#root");
 
@@ -17,7 +17,8 @@ class Dashboard extends React.Component {
             currentPage: 0,
             currentCustomerIndex: null,
             showModal: false,
-            customers: []
+            customers: [],
+            showLoader: true
         };
         this.handlePageClick = this.handlePageClick.bind(this);
         this.handleOpenModal = this.handleOpenModal.bind(this);
@@ -34,14 +35,14 @@ class Dashboard extends React.Component {
 
     receivedData() {
         APICall().then((apiData) => {
+            this.setState({ showLoader: false });
             const data = apiData.slice();
-            // const data = products.slice();
             const slice = data.slice(this.state.offset, this.state.offset + this.state.perPage);
-    
+
             const postData = slice.map((pd, index) => {
                 return (<Customer data={pd} key={index} onViewClick={() => this.handleOpenModal(index)}> </Customer>);
             });
-    
+
             this.setState({
                 pageCount: Math.ceil(data.length / this.state.perPage),
                 postData: postData,
@@ -49,14 +50,15 @@ class Dashboard extends React.Component {
             })
         })
     }
-    
+
     handlePageClick = (e) => {
         const selectedPage = e.selected;
         const offset = selectedPage * this.state.perPage;
         this.setState(
             {
                 currentPage: selectedPage,
-                offset: offset
+                offset: offset,
+                showLoader: true,
             },
             () => {
                 this.receivedData();
@@ -92,10 +94,25 @@ class Dashboard extends React.Component {
                         />
                     </div>
                 </div>
-                <ReactModal id="modal" className="myModal" isOpen={this.state.showModal && !!data} contentLabel="Minimal Modal Example"
+
+                <ReactModal className="loaderModal" isOpen={this.state.showLoader} contentLabel="Customer Modal"
+                    overlayClassName="overlay">
+                    <Loader
+                        type="TailSpin"
+                        color="#43f755"
+                        className="dataLoader"
+                        height={200}
+                        width={200}
+                        timeout={10000}
+                    />
+                </ReactModal>
+
+                <ReactModal className="myModal" isOpen={this.state.showModal && !!data} contentLabel="Customer Modal"
                     overlayClassName="overlay" onRequestClose={this.handleCloseModal}>
                     <CustomerModal data={data} onClick={this.handleCloseModal} />
                 </ReactModal>
+
+                
 
                 <div className="footer">
                     <svg width="400" height="147" viewBox="0 0 765 147" fill="none" xmlns="http://www.w3.org/2000/svg">
