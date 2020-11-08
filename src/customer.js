@@ -13,7 +13,7 @@ class Customer extends React.Component {
                     <h2>{data.business_name}</h2>
                     <span>{data.city}, {data.province}</span>
                 </div>
-                <div className="col-6">
+                <div className="col-6 customerButtons">
                     <button className="customerViewButton" onClick={() => this.props.onViewClick()}>VIEW</button>
                     <button className="customerCrossButton">
                         <svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">

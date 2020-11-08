@@ -148,6 +148,10 @@ h4 {
   border-top-right-radius: 5px;
 }
 
+.customerButtons {
+  text-align: right;
+}
+
 .customerFooter {
   width: 100%;
   border: 1px solid black;
@@ -164,20 +168,23 @@ h4 {
 .customerViewButton {
   background-color: #41b05c;
   color: white;
-  float: right;
   font-size: 12px;
   font-weight: bold;
   border-radius: 6px;
   height: 85%;
   width: 14%;
+  display: inline-block;
+  position: relative;
   /* border: none; */
 }
 
 .customerCrossButton {
-  float: right;
   background-color: white;
   border: none;
+  display: inline-block;
+  position: relative;
   text-align: center;
+  outline: none !important
 }
 
 .customerCrossButton svg {
